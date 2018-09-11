@@ -3,7 +3,7 @@
 
     #H = [Ha1, Hb1], [Ha2, Hb2]
 
-using CSV, DataFrames
+using CSV, DataFrames, Gadfly
 
 #Read in MOFS
 
@@ -38,8 +38,6 @@ function perform_svd(gas1::Symbol, gas2::Symbol)
             H[2,1] = MOFs[j, Symbol(gas1*"(KH_mmol/kgPa)")]
             H[2,2] = MOFs[j, Symbol(gas2*"(KH_mmol/kgPa)")]
 
-            #actually do the svd
-            #need to store the values constructively
             U, S, V = svd(H)
             sigma[i, j] = S
         end
@@ -50,9 +48,11 @@ end
 
 function analyze_svd(sigma)
 
+    #initialize some arrays
     mag = zeros(length(MOFs[1]), length(MOFs[1]))
     highest = 0
     highest_index = [0,0]
+
     for i = 1:length(MOFs[1])
         for j = 1:length(MOFs[1])
             mag[i, j] = norm(sigma[i, j])
@@ -70,7 +70,34 @@ function analyze_svd(sigma)
     #error analysis?
     #Delta K/H?
 
-    #graphing
-        #get pyplots to work maybe
-        #check out what cory used for his beautiful plot
+    #create circle array
+    n = 1000
+    x_lin = linspace(-1,1,n)
+    y = zeros(2*n)
+    x = zeros(2*n)
+    for i = 1:n
+        y[2 * i] = sqrt(1 - (x_lin[i] ^ 2))
+        y[2 * i - 1] = - sqrt(1 - (x_lin[i] ^ 2))
+        x[2 * i] = x_lin[i]
+        x[2 * i - 1] = x_lin[i]
+    end
+
+    xx = x
+    yy = y
+
+    pre_plot = plot(x = xx, y = yy, Geom.point, Guide.xlabel("x"), Guide.ylabel("y"))
+
+    #formats the xy coords appropriately
+    xy = hcat(x, y)
+    xy = transpose(xy)
+
+    #stretches the xy coords by the sigma from the svd
+    highest_sigma = sigma[highest_index[1], highest_index[2]]
+    sigma = [highest_sigma[1] 0; 0 highest_sigma[2]]
+    println(sigma)
+    xy_stretched = sigma*xy
+
+    post_plot = plot(x = xy_stretched[1,:], y = xy_stretched[2,:], Geom.point, Guide.xlabel("x"), Guide.ylabel("y"))
+
+    return post_plot
 end
