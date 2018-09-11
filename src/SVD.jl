@@ -3,74 +3,61 @@
 
     #H = [Ha1, Hb1], [Ha2, Hb2]
 
-using CSV, DataFrames, Gadfly
+using CSV, DataFrames # , Gadfly
+using LinearAlgebra
 
 #Read in MOFS
 
-    MOFs = CSV.read("C:\\Users\\Caleb\\Documents\\GitHub\\sensor_arrays\\data\\henry_constants.csv")
+    MOFs = CSV.read("../data/henry_constants.csv")
 
 #Perform SVD
-function perform_svd(gas1::Symbol, gas2::Symbol)
+function perform_svd(gas1::AbstractString, gas2::AbstractString)
     #Should we create the program for comparing just two MOFS?
     #Or should it be able to compare 3 as well?
 
+    # MOFs[1] indicates the length of the first column, eg. the number of MOFs being screened
     #initialize Henry's Matrix
     H = zeros(2,2)
-    sigma = Array{Array{Float64, 1}}(length(MOFs[1]), length(MOFs[1]))
+    sigma = zeros(length(MOFs[1]), length(MOFs[1]), 2)
 
     for i = 1:length(MOFs[1])
 
-        gas1 = String(gas1)
-        gas2 = String(gas2)
-
-        H[1,1] = MOFs[i, Symbol(gas1*"(KH_mmol/kgPa)")]
-        H[1,2] = MOFs[i, Symbol(gas2*"(KH_mmol/kgPa)")]
+        H[1,1] = MOFs[i, Symbol(gas1 * "(KH_mmol/kgPa)")]
+        H[1,2] = MOFs[i, Symbol(gas2 * "(KH_mmol/kgPa)")]
 
 
-        for j = 1:length(MOFs[1])
-            #Should I erase the entries where the MOFs are the same?
-            #or just leave them and do the analysis anyways?
-            if i == j
-                sigma[i,j] = [0,0]
-                continue
-            end
+        for j = i+1:length(MOFs[1])
 
-            H[2,1] = MOFs[j, Symbol(gas1*"(KH_mmol/kgPa)")]
-            H[2,2] = MOFs[j, Symbol(gas2*"(KH_mmol/kgPa)")]
+            H[2,1] = MOFs[j, Symbol(gas1 * "(KH_mmol/kgPa)")]
+            H[2,2] = MOFs[j, Symbol(gas2 * "(KH_mmol/kgPa)")]
 
-            U, S, V = svd(H)
-            sigma[i, j] = S
+            U, sigma[i, j, :], V = svd(H)
         end
     end
 
     return sigma
 end
 
-function analyze_svd(sigma)
+function analyze_svd(sigma::Array{Float64, 3})
 
     #initialize some arrays
-    mag = zeros(length(MOFs[1]), length(MOFs[1]))
-    highest = 0
-    highest_index = [0,0]
+    best_indices = argmax(sigma[:, :, 2]) # finds the largest σ₂ value
+    worst_indices = argmin(sigma[:, :, 1]) # finds the smallest σ₁ value
 
-    for i = 1:length(MOFs[1])
-        for j = 1:length(MOFs[1])
-            #TODO Change to max, min
-            mag[i, j] = norm(sigma[i, j])
-            if mag[i, j] > highest
-                highest = mag[i, j]
-                highest_index = [i,j]
-            end
-        end
-    end
-
-    MOF1 = String(MOFs[highest_index[1], 1])
-    MOF2 = String(MOFs[highest_index[2], 1])
+    MOF1 = String(MOFs[best_indices[1], 1])
+    MOF2 = String(MOFs[best_indices[2], 1])
 
     println("The most sensitive pair of MOFs is " * MOF1 * " and " * MOF2)
+
+    MOF3 = String(MOFs[worst_indices[1], 1])
+    MOF4 = String(MOFs[worst_indices[2], 1])
+
+    println("The least sensitive pair of MOFs is " * MOF3 * " and " * MOF4)
+
     #error analysis?
     #Delta K/H?
 
+#=
     #create circle array
     n = 1000
     #TODO change to range
@@ -102,4 +89,5 @@ function analyze_svd(sigma)
     post_plot = plot(x = xy_stretched[1,:], y = xy_stretched[2,:], Geom.point, Guide.xlabel("x"), Guide.ylabel("y"))
 
     return post_plot
+    =#
 end
