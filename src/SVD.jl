@@ -30,10 +30,10 @@ function perform_svd(gas1::Symbol, gas2::Symbol)
         for j = 1:length(MOFs[1])
             #Should I erase the entries where the MOFs are the same?
             #or just leave them and do the analysis anyways?
-            #if i == j
-            #    sigma[i,j] = [0,0]
-            #    continue
-            #end
+            if i == j
+                sigma[i,j] = [0,0]
+                continue
+            end
 
             H[2,1] = MOFs[j, Symbol(gas1*"(KH_mmol/kgPa)")]
             H[2,2] = MOFs[j, Symbol(gas2*"(KH_mmol/kgPa)")]
@@ -55,6 +55,7 @@ function analyze_svd(sigma)
 
     for i = 1:length(MOFs[1])
         for j = 1:length(MOFs[1])
+            #TODO Change to max, min
             mag[i, j] = norm(sigma[i, j])
             if mag[i, j] > highest
                 highest = mag[i, j]
@@ -72,6 +73,7 @@ function analyze_svd(sigma)
 
     #create circle array
     n = 1000
+    #TODO change to range
     x_lin = linspace(-1,1,n)
     y = zeros(2*n)
     x = zeros(2*n)
