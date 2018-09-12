@@ -5,10 +5,11 @@
 
 using CSV, DataFrames # , Gadfly
 using LinearAlgebra
+using PyPlot
 
 #Read in MOFS
 
-    MOFs = CSV.read("../data/henry_constants.csv")
+df_henry = CSV.read("../data/henry_constants.csv")
 
 #Perform SVD
 function perform_svd(gas1::AbstractString, gas2::AbstractString)
@@ -17,25 +18,25 @@ function perform_svd(gas1::AbstractString, gas2::AbstractString)
 
     # MOFs[1] indicates the length of the first column, eg. the number of MOFs being screened
     #initialize Henry's Matrix
-    H = zeros(2,2)
-    sigma = zeros(length(MOFs[1]), length(MOFs[1]), 2)
+    sigma = zeros(length(df_henry[1]), length(df_henry[1]), 2)
 
-    for i = 1:length(MOFs[1])
-
-        H[1,1] = MOFs[i, Symbol(gas1 * "(KH_mmol/kgPa)")]
-        H[1,2] = MOFs[i, Symbol(gas2 * "(KH_mmol/kgPa)")]
-
-
-        for j = i+1:length(MOFs[1])
-
-            H[2,1] = MOFs[j, Symbol(gas1 * "(KH_mmol/kgPa)")]
-            H[2,2] = MOFs[j, Symbol(gas2 * "(KH_mmol/kgPa)")]
-
-            U, sigma[i, j, :], V = svd(H)
-        end
+    for i = 1:length(df_henry[1])
+        for j = i+1:length(df_henry[1])
+            H = make_h_matrix(i, j, gas1, gas2)
+            F = svd(H)
+            sigma[i, j, :] = F.S
+            end
     end
-
     return sigma
+end
+
+function make_h_matrix(mof1::Int, mof2::Int, gas1::AbstractString, gas2::AbstractString)
+    H = zeros(2,2)
+    H[1, 1] = df_henry[mof1, Symbol(gas1 * "(KH_mmol/kgPa)")] - df_henry[mof1, Symbol("CH4(KH_mmol/kgPa)")]
+    H[1, 2] = df_henry[mof1, Symbol(gas2 * "(KH_mmol/kgPa)")] - df_henry[mof1, Symbol("CH4(KH_mmol/kgPa)")]
+    H[2, 1] = df_henry[mof2, Symbol(gas1 * "(KH_mmol/kgPa)")] - df_henry[mof2, Symbol("CH4(KH_mmol/kgPa)")]
+    H[2, 2] = df_henry[mof2, Symbol(gas2 * "(KH_mmol/kgPa)")] - df_henry[mof2, Symbol("CH4(KH_mmol/kgPa)")]
+    return H
 end
 
 function analyze_svd(sigma::Array{Float64, 3})
@@ -44,13 +45,13 @@ function analyze_svd(sigma::Array{Float64, 3})
     best_indices = argmax(sigma[:, :, 2]) # finds the largest σ₂ value
     worst_indices = argmin(sigma[:, :, 1]) # finds the smallest σ₁ value
 
-    MOF1 = String(MOFs[best_indices[1], 1])
-    MOF2 = String(MOFs[best_indices[2], 1])
+    MOF1 = String(df_henry[best_indices[1], 1])
+    MOF2 = String(df_henry[best_indices[2], 1])
 
     println("The most sensitive pair of MOFs is " * MOF1 * " and " * MOF2)
 
-    MOF3 = String(MOFs[worst_indices[1], 1])
-    MOF4 = String(MOFs[worst_indices[2], 1])
+    MOF3 = String(df_henry[worst_indices[1], 1])
+    MOF4 = String(df_henry[worst_indices[2], 1])
 
     println("The least sensitive pair of MOFs is " * MOF3 * " and " * MOF4)
 
@@ -90,4 +91,63 @@ function analyze_svd(sigma::Array{Float64, 3})
 
     return post_plot
     =#
+end
+
+function plot_graphs(mof1::Int, mof2::Int, gas1::AbstractString, gas2::AbstractString)
+    H = make_h_matrix(mof1, mof2, gas1, gas2)
+    H⁻¹ = inv(H)
+    F = svd(H⁻¹)
+    θ = range(0, stop=2*π, length=500)[1:end-1]
+    p = transpose(hcat(cos.(θ), sin.(θ))) # set pt change
+    n = H⁻¹ * p # required input
+
+    function plot_vector(x; head_length=0.05, head_width=0.05, color="k", label="", label_dist=0.05)
+        x_plot = x - head_length * x / norm(x)
+        arrow(0, 0, x_plot[1], x_plot[2], head_width=head_width,
+            head_length=head_length, fc=color, ec=color)
+        x_label = x + x / norm(x) * label_dist
+        text(x_label[1], x_label[2], label)
+    end
+
+    figure(figsize=(8, 5))
+    subplot(121)
+    scatter(y[1, :], y[2, :], c=θ, cmap="hsv")
+    xticks([-1, 0, 1])
+    yticks([-1, 0, 1])
+    xlim([-1.1, 1.1])
+    ylim([-1.1, 1.1])
+    axis("equal")
+    xlabel("\$y_{1, sp}^*\$")
+    ylabel("\$y_{2, sp}^*\$")
+    for k = 1:2
+        plot_vector(SVD[:V][:, k], color="k",
+            label="\$\\mathbf{v}_$k\$", label_dist=0.1)
+    end
+    title("Set pt changes")
+    tight_layout()
+
+    subplot(122)
+    scatter(u[1, :], u[2, :], c=θ, cmap="hsv")
+    if incl_valve_limits
+        max_valve = 0.15
+        plot([-max_valve, -max_valve], [max_valve, -max_valve], color="k", linestyle="--")
+        plot([max_valve, max_valve], [max_valve, -max_valve], color="k", linestyle="--")
+        plot([max_valve, -max_valve], [max_valve, max_valve], color="k", linestyle="--")
+        plot([max_valve, -max_valve], [-max_valve, -max_valve], color="k", linestyle="--")
+    end
+
+    xticks([-1, 0, 1])
+    yticks([-1, 0, 1])
+    xlim([-1.1, 1.1])
+    ylim([-1.1, 1.1])
+    for k = 1:2
+        plot_vector(SVD[:U][:, k] * SVD[:S][k], head_length=0.005,
+            head_width=0.05/3, color="k", label="\$\\sigma_$k\\mathbf{u}_$k\$", label_dist=0.025)
+    end
+    axis("equal")
+    xlabel("\$u_{1}^*\$")
+    ylabel("\$u_{2}^*\$")
+    title("Required inputs")
+    tight_layout()
+    savefig("u_required.png", format="png", dpi=300)
 end
