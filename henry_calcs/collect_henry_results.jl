@@ -6,7 +6,8 @@ using CSV
 using DelimitedFiles
 using Printf
 
-crystals = readdlm("all_MOFs.txt", String) .* ".cif"
+#crystals = readdlm("all_MOFs.txt", String) .* ".cif"
+crystals = readdir("data\\crystals\\")
 
 data_to_collect = ["henry coefficient [mmol/(g-bar)]", "err henry coefficient [mmol/(g-bar)]", "Qst (kJ/mol)", "elapsed time (min)"]
 gases = ["CO2", "C2H6", "CH4"]
