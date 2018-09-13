@@ -1,11 +1,10 @@
-#notes
-    #MOF_Combinations = n * (n-1) / 2
-
-    #H = [Ha1, Hb1], [Ha2, Hb2]
-
-using CSV, DataFrames # , Gadfly
+using CSV, DataFrames
 using LinearAlgebra
 using PyPlot
+using Test
+using Printf
+using Statistics
+import PyPlot; const plt = PyPlot
 
 #Read in MOFS
 
@@ -23,7 +22,8 @@ function perform_svd(gas1::AbstractString, gas2::AbstractString)
     for i = 1:length(df_henry[1])
         for j = i+1:length(df_henry[1])
             H = make_h_matrix(i, j, gas1, gas2)
-            F = svd(H)
+            H⁻¹ = inv(H)
+            F = svd(H⁻¹)
             sigma[i, j, :] = F.S
             end
     end
@@ -101,53 +101,60 @@ function plot_graphs(mof1::Int, mof2::Int, gas1::AbstractString, gas2::AbstractS
     p = transpose(hcat(cos.(θ), sin.(θ))) # set pt change
     n = H⁻¹ * p # required input
 
+    S = perform_svd(gas1, gas2)
+    biggest_σ = maximum(S[:, :, 1])
+
     function plot_vector(x; head_length=0.05, head_width=0.05, color="k", label="", label_dist=0.05)
         x_plot = x - head_length * x / norm(x)
         arrow(0, 0, x_plot[1], x_plot[2], head_width=head_width,
-            head_length=head_length, fc=color, ec=color)
+            head_length=head_length, fc=color, ec=color, zorder=1000000)
         x_label = x + x / norm(x) * label_dist
         text(x_label[1], x_label[2], label)
     end
 
-    figure(figsize=(8, 5))
-    subplot(121)
-    scatter(y[1, :], y[2, :], c=θ, cmap="hsv")
-    xticks([-1, 0, 1])
-    yticks([-1, 0, 1])
+    cnorm = PyPlot.matplotlib[:colors][:Normalize](vmin=0.0, vmax=2 * π)
+
+    m = plt.cm[:ScalarMappable](norm=cnorm, cmap=plt.cm[:hsv])
+    m[:set_array]([]) # trick
+
+
+    figure(figsize=(11, 5))
+    subplot(121, aspect="equal")
+    for i = 1:length(θ)-1
+        plt.plot(p[1, i:i+1], p[2, i:i+1], lw=5, c=m[:to_rgba](mean(θ[i:i+1])))
+    end
     xlim([-1.1, 1.1])
     ylim([-1.1, 1.1])
     axis("equal")
-    xlabel("\$y_{1, sp}^*\$")
-    ylabel("\$y_{2, sp}^*\$")
+    xlabel(@sprintf("\$p_{%s}^*\$ (bar)", gas1))
+    ylabel(@sprintf("\$p_{%s}^*\$ (bar)", gas2))
     for k = 1:2
-        plot_vector(SVD[:V][:, k], color="k",
+        plot_vector(F.V[:, k], color="k",
             label="\$\\mathbf{v}_$k\$", label_dist=0.1)
     end
-    title("Set pt changes")
+    title("Composition Space")
     tight_layout()
 
-    subplot(122)
-    scatter(u[1, :], u[2, :], c=θ, cmap="hsv")
-    if incl_valve_limits
-        max_valve = 0.15
-        plot([-max_valve, -max_valve], [max_valve, -max_valve], color="k", linestyle="--")
-        plot([max_valve, max_valve], [max_valve, -max_valve], color="k", linestyle="--")
-        plot([max_valve, -max_valve], [max_valve, max_valve], color="k", linestyle="--")
-        plot([max_valve, -max_valve], [-max_valve, -max_valve], color="k", linestyle="--")
+    subplot(122, aspect="equal")
+    ylim([-biggest_σ, biggest_σ])
+    xlim([-biggest_σ, biggest_σ])
+    for i = 1:length(θ)-1
+        plt.plot(n[1, i:i+1], n[2, i:i+1], lw=5, c=m[:to_rgba](mean(θ[i:i+1])))
     end
-
-    xticks([-1, 0, 1])
-    yticks([-1, 0, 1])
-    xlim([-1.1, 1.1])
-    ylim([-1.1, 1.1])
     for k = 1:2
-        plot_vector(SVD[:U][:, k] * SVD[:S][k], head_length=0.005,
+        plot_vector(F.U[:, k] * F.S[k], head_length=0.005,
             head_width=0.05/3, color="k", label="\$\\sigma_$k\\mathbf{u}_$k\$", label_dist=0.025)
     end
     axis("equal")
-    xlabel("\$u_{1}^*\$")
-    ylabel("\$u_{2}^*\$")
-    title("Required inputs")
+    xlabel(@sprintf("\$n_{%i}^*\$ (mmol of total gas)", mof1))
+    ylabel(@sprintf("\$n_{%i}^*\$ (mmol of total gas)", mof2))
+    title("Response Space")
     tight_layout()
-    savefig("u_required.png", format="png", dpi=300)
+    savefig(@sprintf("composition_response_of_%i_and_%i.png", mof1, mof2), format="png", dpi=300)
+end
+
+@testset "Sensor Tests" begin
+    H = make_h_matrix(3, 5, "CO2", "C2H6")
+    G = [(8.91e-5) (4.84e-5); (1.87e-5) (4.68e-5)] .- [5.84e-6; 9.56e-6]
+    @test isapprox(H, G)
 end
