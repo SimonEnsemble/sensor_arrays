@@ -1,17 +1,16 @@
 using PorousMaterials
 using DataFrames
 using CSV
-using DelimitedFiles
 using Printf
 
 # defines number of insertions of a molecule into a single crystal
-insertions_per_volume =
+insertions_per_volume = 250
 # defines Lennard Jones forcefield
-ljforcefield = ".csv"
+ljforcefield = "UFF.csv"
 # defines temperature
-temperature =
+temperature = 298.0
 # defines crystals as the folder which stores all crystals
-crystals = readdlm("all_crystals.txt", String)
+crystals = readdir("data/crystals/")
 
 """
 Write a job submission script to submit for KH simulation of `gas` in `crystals` at `temperature`.
@@ -54,12 +53,12 @@ function write_henry_submit_script(molecule::String, crystal::String, temperatur
     date
     julia -p 4 run_henry.jl %s %s %f %s %d
     """, crystal * "_" * molecule * "_" * string(insertions_per_volume),
-        crystal * "_" * molecule, crystal * "_" * molecule, molecule, crystal * ".cif",
+        crystal * "_" * molecule, crystal * "_" * molecule, molecule, crystal,
         temperature, ljforcefield, insertions_per_volume)
     close(KH_submit)
 end
 
-for gas in ["CO2", "CH4"]
+for gas in ["CO2", "CH4", "C2H6"]
     # reads in a crystal from crystals folder
 	for crystal in crystals
        	 # submission file filled in by molecule and crystal of interest
