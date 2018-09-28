@@ -1,13 +1,12 @@
 using PorousMaterials
 using DataFrames
 using JLD2
-using HDF5
 using CSV
 using DelimitedFiles
 using Printf
 
 #crystals = readdlm("all_MOFs.txt", String) .* ".cif"
-crystals = readdir("data\\crystals\\")
+crystals = readdir("data/crystals/")
 
 data_to_collect = ["henry coefficient [mmol/(g-bar)]", "err henry coefficient [mmol/(g-bar)]", "Qst (kJ/mol)", "elapsed time (min)"]
 gases = ["CO2", "C2H6", "CH4"]
@@ -21,21 +20,12 @@ for gas in gases
     end
 end
 
-insertions_per_volume =
-ljforcefield = ".csv"
-temperature =
+insertions_per_volume = 250
+ljforcefield = "UFF.csv"
+temperature = 298.0
 
 for gas in gases
     for crystal in crystals
-#=
-        if crystal == "CON.cif"
-            @warn "ASK ARNI ABT CON"
-            idx_crystal = df[:crystal] .== crystal
-            for data in data_to_collect
-                df[idx_crystal, Symbol(gas * "_" * data)] = missing
-            end
-            continue
-=#        end
         result_file = "data/henry_sims/" * henry_result_savename(Framework(crystal), Molecule(gas), temperature,
                                            LJForceField(ljforcefield), insertions_per_volume)
         if isfile(result_file)
@@ -55,4 +45,4 @@ for gas in gases
         end
     end
 end
-CSV.write("sensors_crystal_KHs.csv", df)
+CSV.write("new_sensors_crystal_KHs.csv", df)

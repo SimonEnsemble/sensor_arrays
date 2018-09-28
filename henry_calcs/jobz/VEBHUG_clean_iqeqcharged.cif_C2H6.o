@@ -1,0 +1,33 @@
+Mon Sep 24 15:23:29 PDT 2018
+Simulating Henry coefficient of C2H6 in VEBHUG_clean_iqeqcharged.cif at 298.0 K, using UFF.csv force field with 250 insertions per Å³.
+	1553511 total # particle insertions
+	Replicating framework 2 by 2 by 2 for short-range cutoff 14.00
+	Framework atoms of VEBHUG_clean_iqeqcharged.cif have charges? true
+	Molecule C2H6 has point charges? false
+	Block  1/5 statistics:
+	Henry coeff. [mmol/(g-bar)]: 1.4371210474067162
+	⟨U, vdw⟩ (K): -1356.2807532508327
+	⟨U, Coulomb⟩ (K): 0.0
+	Block  2/5 statistics:
+	Henry coeff. [mmol/(g-bar)]: 1.4416771800318515
+	⟨U, vdw⟩ (K): -1355.9224653917954
+	⟨U, Coulomb⟩ (K): 0.0
+	Block  3/5 statistics:
+	Henry coeff. [mmol/(g-bar)]: 1.4386420882277025
+	⟨U, vdw⟩ (K): -1357.2678326107298
+	⟨U, Coulomb⟩ (K): 0.0
+	Block  4/5 statistics:
+	Henry coeff. [mmol/(g-bar)]: 1.4279505629857423
+	⟨U, vdw⟩ (K): -1351.9819909987348
+	⟨U, Coulomb⟩ (K): 0.0
+	Block  5/5 statistics:
+	Henry coeff. [mmol/(g-bar)]: 1.4500261075988992
+	⟨U, vdw⟩ (K): -1359.5424412445998
+	⟨U, Coulomb⟩ (K): 0.0
+	Results saved in: /nfs/stak/users/sturlusa/Projects/sensor_arrays/henry_calcs/data/henry_sims/henry_sim_C2H6_in_VEBHUG_clean_iqeqcharged.cif_298.000000K_UFF.csv_ff_250_insertions_per_volume.jld2
+	Elapsed time (min): 0.8205482522646587
+	----- final results ----
+	henry coefficient [mmol/(g-bar)] = 1.439083 +/- 0.007134
+	⟨U, vdw⟩ (kJ/mol) = -11.276063 +/- 0.020430
+	⟨U, Coulomb⟩ (kJ/mol) = 0.000000 +/- 0.000000
+	Qst (kJ/mol) = 13.753772 +/- 0.020430
