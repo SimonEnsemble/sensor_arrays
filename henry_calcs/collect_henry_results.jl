@@ -4,12 +4,14 @@ using JLD2
 using CSV
 using DelimitedFiles
 using Printf
+using FileIO
 
 #crystals = readdlm("all_MOFs.txt", String) .* ".cif"
-crystals = readdir("data/crystals/")
+#crystals = readdir("data/crystals/")
+crystals = readdir("../new_xtals/")
 
 data_to_collect = ["henry coefficient [mmol/(g-bar)]", "err henry coefficient [mmol/(g-bar)]", "Qst (kJ/mol)", "elapsed time (min)"]
-gases = ["CO2", "C2H6", "CH4"]
+gases = ["CO2", "C2H6", "CH4", "H2S"]
 
 df = DataFrame(crystal=crystals[:])
 for gas in gases
@@ -29,7 +31,9 @@ for gas in gases
         result_file = "data/henry_sims/" * henry_result_savename(Framework(crystal), Molecule(gas), temperature,
                                            LJForceField(ljforcefield), insertions_per_volume)
         if isfile(result_file)
-            @load result_file result
+            result = load(result_file)
+            result = result[collect(keys(result))[1]]
+#            @load result_file result
 
             idx_crystal = df[:crystal] .== crystal
             for data in data_to_collect
@@ -45,4 +49,4 @@ for gas in gases
         end
     end
 end
-CSV.write("new_sensors_crystal_KHs.csv", df)
+CSV.write("sensors_crystal_KHs_Oct11.csv", df)
