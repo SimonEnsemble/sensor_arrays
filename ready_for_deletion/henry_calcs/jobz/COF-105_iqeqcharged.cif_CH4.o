@@ -1,0 +1,33 @@
+Mon Sep 24 15:23:03 PDT 2018
+Simulating Henry coefficient of CH4 in COF-105_iqeqcharged.cif at 298.0 K, using UFF.csv force field with 250 insertions per Å³.
+	22608554 total # particle insertions
+	Replicating framework 1 by 1 by 1 for short-range cutoff 14.00
+	Framework atoms of COF-105_iqeqcharged.cif have charges? true
+	Molecule CH4 has point charges? false
+	Block  1/5 statistics:
+	Henry coeff. [mmol/(g-bar)]: 0.7048321724247434
+	⟨U, vdw⟩ (K): -615.3634743664039
+	⟨U, Coulomb⟩ (K): 0.0
+	Block  2/5 statistics:
+	Henry coeff. [mmol/(g-bar)]: 0.7041308009258509
+	⟨U, vdw⟩ (K): -614.7503314385235
+	⟨U, Coulomb⟩ (K): 0.0
+	Block  3/5 statistics:
+	Henry coeff. [mmol/(g-bar)]: 0.7043584039230102
+	⟨U, vdw⟩ (K): -614.9909997314845
+	⟨U, Coulomb⟩ (K): 0.0
+	Block  4/5 statistics:
+	Henry coeff. [mmol/(g-bar)]: 0.7043060022974711
+	⟨U, vdw⟩ (K): -614.9776208639411
+	⟨U, Coulomb⟩ (K): 0.0
+	Block  5/5 statistics:
+	Henry coeff. [mmol/(g-bar)]: 0.7045591660532563
+	⟨U, vdw⟩ (K): -615.4019302364292
+	⟨U, Coulomb⟩ (K): 0.0
+	Results saved in: /nfs/stak/users/sturlusa/Projects/sensor_arrays/henry_calcs/data/henry_sims/henry_sim_CH4_in_COF-105_iqeqcharged.cif_298.000000K_UFF.csv_ff_250_insertions_per_volume.jld2
+	Elapsed time (min): 3.8041764855384828
+	----- final results ----
+	henry coefficient [mmol/(g-bar)] = 0.704437 +/- 0.000240
+	⟨U, vdw⟩ (kJ/mol) = -5.114198 +/- 0.002069
+	⟨U, Coulomb⟩ (kJ/mol) = 0.000000 +/- 0.000000
+	Qst (kJ/mol) = 7.591907 +/- 0.002069

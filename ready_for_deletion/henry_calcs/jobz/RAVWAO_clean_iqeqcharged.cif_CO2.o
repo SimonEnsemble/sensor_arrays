@@ -1,0 +1,33 @@
+Mon Sep 24 15:22:52 PDT 2018
+Simulating Henry coefficient of CO2 in RAVWAO_clean_iqeqcharged.cif at 298.0 K, using UFF.csv force field with 250 insertions per Å³.
+	981739 total # particle insertions
+	Replicating framework 5 by 2 by 2 for short-range cutoff 14.00
+	Framework atoms of RAVWAO_clean_iqeqcharged.cif have charges? true
+	Molecule CO2 has point charges? true
+	Block  1/5 statistics:
+	Henry coeff. [mmol/(g-bar)]: 6.87062741624398
+	⟨U, vdw⟩ (K): -2203.8285720275894
+	⟨U, Coulomb⟩ (K): -536.749179145092
+	Block  2/5 statistics:
+	Henry coeff. [mmol/(g-bar)]: 7.029271533922727
+	⟨U, vdw⟩ (K): -2170.3043049114785
+	⟨U, Coulomb⟩ (K): -599.2487737464244
+	Block  3/5 statistics:
+	Henry coeff. [mmol/(g-bar)]: 7.095319256437272
+	⟨U, vdw⟩ (K): -2196.5948810631326
+	⟨U, Coulomb⟩ (K): -555.0943234335674
+	Block  4/5 statistics:
+	Henry coeff. [mmol/(g-bar)]: 7.420910830379748
+	⟨U, vdw⟩ (K): -2208.1046143973695
+	⟨U, Coulomb⟩ (K): -568.738076829661
+	Block  5/5 statistics:
+	Henry coeff. [mmol/(g-bar)]: 6.836588085809025
+	⟨U, vdw⟩ (K): -2201.2818750702636
+	⟨U, Coulomb⟩ (K): -546.5908147592907
+	Results saved in: /nfs/stak/users/sturlusa/Projects/sensor_arrays/henry_calcs/data/henry_sims/henry_sim_CO2_in_RAVWAO_clean_iqeqcharged.cif_298.000000K_UFF.csv_ff_250_insertions_per_volume.jld2
+	Elapsed time (min): 460.05039753516513
+	----- final results ----
+	henry coefficient [mmol/(g-bar)] = 7.050543 +/- 0.208699
+	⟨U, vdw⟩ (kJ/mol) = -18.258744 +/- 0.111322
+	⟨U, Coulomb⟩ (kJ/mol) = -4.666775 +/- 0.180370
+	Qst (kJ/mol) = 25.403228 +/- 0.291692
