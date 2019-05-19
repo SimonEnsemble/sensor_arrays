@@ -4,9 +4,9 @@ Jupyter Notebook to produce data for:
 
 > A. Sturluson, R. Sousa, Y. Zhang, M. T. Huynh, C. Laird, A. H. P. York, C. Silsby, C. Chang, C. M. Simon. Curating metal-organic frameworks to compose robust gas sensor arrays in dilute conditions.
 
-The notebooks can be viewed without having the necessary programming languages (Julia 1.1 and Python 3), but in order to run the cells within the notebooks, you will need Julia 1.1/Python 3
-[Click me for Julia 1.1](https://julialang.org/)
-[Click me for Python 3](https://www.python.org/)
+The notebooks can be viewed without having the necessary programming languages (Julia 1.1 and Python 3), but in order to run the cells within the notebooks, you will need Julia 1.1/Python 3</br>
+[Click me for Julia 1.1](https://julialang.org/)</br>
+[Click me for Python 3](https://www.python.org/)</br>
 # Structure of repository
 ```
 .
@@ -14,9 +14,9 @@ The notebooks can be viewed without having the necessary programming languages (
 ├── src/
 │   ├── Sensing.ipynb                     # A Julia v1.1 notebook used to find metal-organic frameworks to compose robust sensor arrays
 │   ├── scatter_plot_matrix.ipynb         # A Python 3 notebook used to create a scatter plot matrix of the Henry constants of the MOFs
-│   └── Extract_Henry.ipynb               # A Julia v1.1 notebook used to extract Henry constants from experimental CO<sub>2</sub> and SO<sub>2</sub> adsorption isotherms
+│   └── Extract_Henry.ipynb               # A Julia v1.1 notebook used to extract Henry constants from experimental CO2 and SO2 adsorption isotherms
 └── data/
-    ├── expt_data/                        # A directory containing `.csv` files of all CO<sub>2</sub> and SO<sub>2</sub> adsorption isotherms used in this study
+    ├── expt_data/                        # A directory containing `.csv` files of all CO2 and SO2 adsorption isotherms used in this study
     ├── cif_viz/                          # A directory containing generated images of the MOFs (using the VisIt visualization software)
     └── henry_constants.csv               # A file containing the extracted Henry constants from all adsorption isotherms (See `src/Extract_Henry.ipynb`)
 ```
