@@ -14,11 +14,13 @@ The notebooks can be viewed without having the necessary programming languages (
 ├── src/
 │   ├── Sensing.ipynb                     # A Julia v1.1 notebook used to find metal-organic frameworks to compose robust sensor arrays
 │   ├── scatter_plot_matrix.ipynb         # A Python 3 notebook used to create a scatter plot matrix of the Henry constants of the MOFs
+│   ├── Fancy_plot.ipynb                  # A Julia v1.1 notebook with (ugly) code used to produce the three dimensional image of the sensor array response space in the paper
 │   └── Extract_Henry.ipynb               # A Julia v1.1 notebook used to extract Henry constants from experimental CO2 and SO2 adsorption isotherms
 └── data/
-    ├── expt_data/                        # A directory containing `.csv` files of all CO2 and SO2 adsorption isotherms used in this study, alongside the figures that were used to extract the data from (see references below)
+    ├── expt_data/                        # A directory containing .csv files of all CO2 and SO2 adsorption isotherms used in this study, alongside the figures that were used to extract the data from (see references below)
     ├── cif_viz/                          # A directory containing generated images of the MOFs (using the VisIt visualization software)
-    └── henry_constants.csv               # A file containing the extracted Henry constants from all adsorption isotherms (See `src/Extract_Henry.ipynb`)
+    ├── cifs/                             # A directory containing crystal structures (in .cif format) of the MOFs used in this study. Crystal structures were either obtained without solvents and disorder, or they were fixed by the authors of this paper
+    └── henry_constants.csv               # A file containing the extracted Henry constants from all adsorption isotherms (See src/Extract_Henry.ipynb)
 ```
 
 # MOFs used in the study
