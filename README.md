@@ -16,6 +16,7 @@ The notebooks can be viewed without having the necessary programming languages (
 │   ├── scatter_plot_matrix.ipynb         # A Python 3 notebook used to create a scatter plot matrix of the Henry constants of the MOFs
 │   ├── Fancy_plot.ipynb                  # A Julia v1.1 notebook with (ugly) code used to produce the three dimensional image of the sensor array response space in the paper
 │   └── Extract_Henry.ipynb               # A Julia v1.1 notebook used to extract Henry constants from experimental CO2 and SO2 adsorption isotherms
+├── other_figures/                        # A directory containing figures that were not made in the Notebooks in src/
 └── data/
     ├── expt_data/                        # A directory containing .csv files of all CO2 and SO2 adsorption isotherms used in this study, alongside the figures that were used to extract the data from (see references below)
     ├── cif_viz/                          # A directory containing generated images of the MOFs (using the VisIt visualization software)
